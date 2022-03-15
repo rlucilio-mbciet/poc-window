@@ -1,19 +1,38 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <p>{{ nameUser }}</p>
+    <p>{{ upperName }}</p>
+    <input type="text" v-model="nameUser" />
+    <button @click="fetchName">Fetch</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  created: function () {
+    window.store.users.subscribe((users) => (this.users = users));
+  },
+  data: () => ({ users: null }),
+  methods: {
+    fetchName() {
+      this.users.actions.fetchName();
+    },
+  },
+  computed: {
+    upperName() {
+      return this.users.getters.upperName;
+    },
+    nameUser: {
+      get() {
+        return this.users.state.name;
+      },
+      set(value) {
+        this.users.mutations.setName(value);
+      },
+    },
+  },
+};
 </script>
 
 <style>
